@@ -301,6 +301,10 @@ public class ManagerConnectionImpl implements ManagerConnection, Dispatcher
         }
     }
 
+    public void setAsteriskVersion(AsteriskVersion version) {
+    	this.version = version;
+	}
+
     /**
      * Sets whether to use SSL. <br>
      * Default is false.
@@ -619,7 +623,9 @@ public class ManagerConnectionImpl implements ManagerConnection, Dispatcher
 
         logger.info("Successfully logged in");
 
-        version = determineVersion();
+        if (version == null) {
+			version = determineVersion();
+		}
 
         state = CONNECTED;
 
@@ -1345,7 +1351,7 @@ public class ManagerConnectionImpl implements ManagerConnection, Dispatcher
                 return true;
             }
         }
-    
+
         // Other cases
         if ("OpenPBX Call Manager/1.0".equals(identifier))
             return true;
@@ -1353,7 +1359,7 @@ public class ManagerConnectionImpl implements ManagerConnection, Dispatcher
             return true;
         if (identifier.startsWith("Asterisk Call Manager Proxy/"))
             return true;
-    
+
         return false;
     }
 

@@ -16,12 +16,14 @@
  */
 package org.asteriskjava.manager;
 
+import org.asteriskjava.AsteriskVersion;
+
 /**
- * This factory is the canonical way to obtain new 
+ * This factory is the canonical way to obtain new
  * {@link org.asteriskjava.manager.ManagerConnection}s.<p>
- * It creates new connections in state 
+ * It creates new connections in state
  * {@link org.asteriskjava.manager.ManagerConnectionState#INITIAL}. Before
- * you can start using such a connection (i.e. sending 
+ * you can start using such a connection (i.e. sending
  * {@link org.asteriskjava.manager.action.ManagerAction}s you must
  * {@link org.asteriskjava.manager.ManagerConnection#login()} to change its state
  * to {@link org.asteriskjava.manager.ManagerConnectionState#CONNECTED}.<p>
@@ -29,7 +31,7 @@ package org.asteriskjava.manager;
  * <pre>
  * ManagerConnectionFactory factory;
  * ManagerConnection connection;
- * 
+ *
  * factory = new ManagerConnectionFactory("localhost", "manager", "secret");
  * connection = factory.createManagerConnection();
  * connection.login();
@@ -38,7 +40,7 @@ package org.asteriskjava.manager;
  * </pre>
  * If want you can use the factory to create multiple connections to the same
  * server by calling {@link #createManagerConnection()} multiple times.<p>
- * 
+ *
  * @see org.asteriskjava.manager.ManagerConnection
  * @author srt
  * @version $Id$
@@ -51,11 +53,12 @@ public class ManagerConnectionFactory
     private final int port;
     private final String username;
     private final String password;
+    private AsteriskVersion version = null;
 
     /**
      * Creates a new ManagerConnectionFactory with the given connection data and
      * the default port 5038.
-     * 
+     *
      * @param hostname the hostname of the Asterisk server to connect to.
      * @param username the username to use for login as defined in Asterisk's <code>manager.conf</code>.
      * @param password the password to use for login as defined in Asterisk's <code>manager.conf</code>.
@@ -71,7 +74,7 @@ public class ManagerConnectionFactory
 
     /**
      * Creates a new ManagerConnectionFactory with the given connection data.
-     * 
+     *
      * @param hostname the hostname of the Asterisk server to connect to.
      * @param port the port where Asterisk listens for incoming Manager API
      *            connections, usually 5038.
@@ -87,20 +90,28 @@ public class ManagerConnectionFactory
         this.password = password;
     }
 
+    public ManagerConnectionFactory withVersion(AsteriskVersion version) {
+    	this.version = version;
+    	return this;
+	}
+
     /**
      * Returns a new ManagerConnection in state {@link ManagerConnectionState#CONNECTED}.
-     * 
+     *
      * @return the created connection to the Asterisk server.
      * @since 0.3
      */
     public ManagerConnection createManagerConnection()
     {
-        return new DefaultManagerConnection(hostname, port, username, password);
+		DefaultManagerConnection dmc;
+        dmc = new DefaultManagerConnection(hostname, port, username, password);
+        dmc.setAsteriskVersion(version);
+        return dmc;
     }
 
     /**
      * Returns a new SSL secured ManagerConnection in state {@link ManagerConnectionState#CONNECTED}.
-     * 
+     *
      * @return the created connection to the Asterisk server.
      * @since 0.3
      */
@@ -109,6 +120,7 @@ public class ManagerConnectionFactory
         DefaultManagerConnection dmc;
         dmc = new DefaultManagerConnection(hostname, port, username, password);
         dmc.setSsl(true);
+        dmc.setAsteriskVersion(version);
         return dmc;
     }
 }

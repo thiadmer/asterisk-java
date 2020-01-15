@@ -93,6 +93,10 @@ public class DefaultManagerConnection implements ManagerConnection
         impl.setPassword(password);
     }
 
+    public void setAsteriskVersion(AsteriskVersion version) {
+    	impl.setAsteriskVersion(version);
+	}
+
     /**
      * Sets the hostname of the Asterisk server to connect to.
      * <p>
